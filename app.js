@@ -1,58 +1,62 @@
-let notes = []
-let editingNoteId = null
+let notes = [] // Array que salva as notas
+let editingNoteId = null // Variável que auxilia encontrar a nota exata quer vai ser editada
 
 function loadNotes() {
     const savedNotes = localStorage.getItem('quickNotes')
     return savedNotes ? JSON.parse(savedNotes) : []
+    // Verifica se há notas e ascarrega usando o localStorege e transforma elas de String para array
 }
 
 function saveNote(event) {
-    event.preventDefault()
+    event.preventDefault() // Evita no formulário dar um refresh na página
 
-    const title = document.getElementById('noteTitle').value.trim();
-    const content = document.getElementById('noteContent').value.trim();
+    const title = document.getElementById('noteTitle').value.trim(); // Pega o valor do título da nota
+    const content = document.getElementById('noteContent').value.trim(); // Pega o valor do texto da nota
 
     if(editingNoteId) {
-        // Update Note
-        const noteIndex = notes.findIndex(note => note.id === editingNoteId)
+        // Update nota
+        const noteIndex = notes.findIndex(note => note.id === editingNoteId) // Acha a posição da nota dentro do array
         notes[noteIndex] = {
-            ...notes[noteIndex],
-            title: title,
-            content: content
+            ...notes[noteIndex], // Spread... para manter o contúdo o mesmo
+            title: title, // Substitui pelo novo título
+            content: content // Substitui pelo novo texto
         }
     } else {
-        // Add Note
+        // Unshift adciona um valor no começo de um array
         notes.unshift({
             id: generateId(),
             title: title,
             content: content
+            // Cada nota é um objeto com 3 propriedades: id, title e content
         })
     }
 
-    closeNoteDialog()
-    saveNotes()
-    renderNotes()
+    closeNoteDialog() // Fecha o Dialog
+    saveNotes() // Salva a nota no localStorage como uma String
+    renderNotes() // Faz as notas aparecerem no site
 }
 
 function generateId() {
-    return Date.now().toString()
+    return Date.now().toString() // Usa  data como um id para as notas
 }
 
 function saveNotes() {
     localStorage.setItem('quickNotes', JSON.stringify(notes))
+    // Salva o array como um String no localStorage. Usando a função do JSON para transformar o array em String
 }
 
 function deleteNote(noteId) {
+    // Filtra o array para manter apenas as notas que não possuen o Id passado na função, função essa que é chamada no renderNotes
     notes = notes.filter(note => note.id != noteId)
-    saveNotes()
-    renderNotes()
+    saveNotes() // Salva as notas
+    renderNotes() // Carrega notos retirando a nota que foi excluída
 }
 
-function renderNotes() {
+function renderNotes() { // Cria  e mostra as notas
     const notesContainer = document.getElementById('notesContainer');
 
     if(notes.length === 0) {
-        // Show some fall back elements
+        // Se não há notas criadas, mostra uma mensagem incentivando a criar a primeira nota
         notesContainer.innerHTML = `
             <div class="empty-state"> 
                 <h2>No notes yet</h2>
@@ -62,7 +66,7 @@ function renderNotes() {
         `
         return
     } 
-
+    // Map vai retornar um array de Strings que contém o HTML de cada nota
     notesContainer.innerHTML = notes.map(note => `
         <div class="note-card">
             <h3 class="note-title">${note.title}</h3>
@@ -80,7 +84,7 @@ function renderNotes() {
                 </button>
             </div>
       </div>
-        `).join('')
+        `).join('') // Transforma o array the Strings em uma só String
 }
 
 function openNoteDialog(noteId = null) {
@@ -89,11 +93,11 @@ function openNoteDialog(noteId = null) {
     const contentInput = document.getElementById('noteContent');
     if(noteId) {
         // Edit Mode
-        const noteToEdit = notes.find(note => note.id === noteId)
-        editingNoteId = noteId
+        const noteToEdit = notes.find(note => note.id === noteId) // Acha a nota que foi passada no parâmentro
+        editingNoteId = noteId // Transforma a váriavel nesse ID
         document.getElementById('dialogTitle').textContent = 'Edit Note'
-        titleInput.value = noteToEdit.title
-        contentInput.value = noteToEdit.content
+        titleInput.value = noteToEdit.title // Edita o título
+        contentInput.value = noteToEdit.content // Edita o texto
     }
     else {
         // Add Mode
@@ -103,13 +107,13 @@ function openNoteDialog(noteId = null) {
         contentInput.value = ''
     }
 
-    dialog.showModal()
-    titleInput.focus()
+    dialog.showModal() // Função que abre o Dialog
+    titleInput.focus() // Deixa o fundo borrado
 
 }
 
 function closeNoteDialog() {
-    document.getElementById('noteDialog').close()
+    document.getElementById('noteDialog').close()  // Função que fecha o Dialog
 }
 
 function toggleTheme() {
@@ -125,10 +129,10 @@ function applyStoredTheme() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    applyStoredTheme()
-    notes = loadNotes()
-    renderNotes()
+document.addEventListener('DOMContentLoaded', function() { // Lugar onde os eventlisteners ficarão
+    applyStoredTheme() // Aplica o modo claro ou escuro quando a página carrega
+    notes = loadNotes() // Carregar as notas do localStorage
+    renderNotes() // Mostra as notas quando a página carrega
 
     document.getElementById('noteForm').addEventListener('submit', saveNote)
     document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme)
@@ -136,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('noteDialog').addEventListener('click', function(event) {
         if(event.target === this) {
             closeNoteDialog()
+            // A palavra "this" se refere ao documento então quando se clicar em qualquer lugar no documento fecha a nota
         }
     })
 })
