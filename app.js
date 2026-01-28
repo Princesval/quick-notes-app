@@ -26,14 +26,22 @@ function saveNote(event) {
         notes.unshift({
             id: generateId(),
             title: title,
-            content: content
-            // Cada nota é um objeto com 3 propriedades: id, title e content
+            content: content,
+            completed: false
+            // Cada nota é um objeto com 3 propriedades: id, title, content e completed 
         })
     }
 
     closeNoteDialog() // Fecha o Dialog
     saveNotes() // Salva a nota no localStorage como uma String
     renderNotes() // Faz as notas aparecerem no site
+}
+
+function toggleNoteStatus(noteId) {
+    const noteIndex = notes.findIndex(note => note.id === noteId)
+    notes[noteIndex].completed = !notes[noteIndex].completed // troca entre true e false
+    saveNotes()
+    renderNotes()
 }
 
 function generateId() {
@@ -68,10 +76,25 @@ function renderNotes() { // Cria  e mostra as notas
     } 
     // Map vai retornar um array de Strings que contém o HTML de cada nota
     notesContainer.innerHTML = notes.map(note => `
-        <div class="note-card">
+        <div class="note-card ${note.completed ? 'completed' : ''}">
             <h3 class="note-title">${note.title}</h3>
             <p class="note-content">${note.content}</p>
             <div class="note-actions">
+                <button class="status-btn ${note.completed ? 'completed' : 'pending'}" onclick="toggleNoteStatus('${note.id}')" title="${note.completed ? 'Mark as pending' : 'Mark as completed'}">
+                ${note.completed 
+                ? `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/>
+                </svg>
+                `
+                : `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/>
+                </svg>
+                `
+                }
+                </button>
+
                 <button class="edit-btn" onclick="openNoteDialog('${note.id}')" title="Edit Note">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
@@ -82,6 +105,7 @@ function renderNotes() { // Cria  e mostra as notas
                     <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.88c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
                 </svg>
                 </button>
+                
             </div>
       </div>
         `).join('') // Transforma o array the Strings em uma só String
