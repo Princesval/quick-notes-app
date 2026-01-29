@@ -14,7 +14,20 @@
         <div>
             <button class="add-note-btn" onclick="openNoteDialog()">+ Add Note</button>
             <button id="themeToggleBtn" class="theme-toggle-btn">🌙</button>
+        
+            <div class="filter-dropdown">
+                <button class="filter-btn" id="filterToggleBtn" title="Filter notes">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
+            </button>
+
+            <div class="filter-menu" id="filterMenu">
+                <button onclick="setFilter('all')">All</button>
+                <button onclick="setFilter('pending')">Pending</button>
+                <button onclick="setFilter('completed')">Completed</button>
+            </div>
+            </div>
         </div>
+
     </header>
 
     <main id="notesContainer" class="notes-grid">

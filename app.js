@@ -1,5 +1,18 @@
 let notes = [] // Array que salva as notas
 let editingNoteId = null // Variável que auxilia encontrar a nota exata quer vai ser editada
+let currentFilter = 'all' // Variável para o filtro
+
+function toggleFilterMenu() {
+    document.getElementById('filterMenu').classList.toggle('active') // Função para abrir e fechar o menu de filtro
+}
+
+function setFilter(filter) {
+    currentFilter = filter
+    renderNotes()
+    document.getElementById('filterMenu').classList.remove('active')
+}
+
+
 
 function loadNotes() {
     const savedNotes = localStorage.getItem('quickNotes')
@@ -62,20 +75,31 @@ function deleteNote(noteId) {
 
 function renderNotes() { // Cria  e mostra as notas
     const notesContainer = document.getElementById('notesContainer');
+    let filteredNotes = notes
 
-    if(notes.length === 0) {
+    if (currentFilter === 'pending') {
+        filteredNotes = notes.filter(note => !note.completed)
+    }
+
+    if (currentFilter === 'completed') {
+        filteredNotes = notes.filter(note => note.completed)
+    }
+
+    if(filteredNotes.length === 0) {
         // Se não há notas criadas, mostra uma mensagem incentivando a criar a primeira nota
         notesContainer.innerHTML = `
             <div class="empty-state"> 
                 <h2>No notes yet</h2>
-                <p>Create your first note to get started!</p>
+                <p>
+                    ${currentFilter === 'all'? 'Create your first note to get started!': 'No notes match this filter.'}
+                </p>
                 <button class="add-note-btn" onclick="openNoteDialog()">+ Add Your First Note</button>
             </div>
         `
         return
     } 
     // Map vai retornar um array de Strings que contém o HTML de cada nota
-    notesContainer.innerHTML = notes.map(note => `
+    notesContainer.innerHTML = filteredNotes.map(note => `
         <div class="note-card ${note.completed ? 'completed' : ''}">
             <h3 class="note-title">${note.title}</h3>
             <p class="note-content">${note.content}</p>
@@ -142,7 +166,7 @@ function closeNoteDialog() {
 
 function toggleTheme() {
     const isDark = document.body.classList.toggle('dark-theme')
-    localStorage.setItem('theme', isDark ? 'dark' : 'ligh')
+    localStorage.setItem('theme', isDark ? 'dark' : 'light')
     document.getElementById('themeToggleBtn').textContent = isDark ? '☀️' : '🌙'
 }
 
@@ -158,6 +182,13 @@ document.addEventListener('DOMContentLoaded', function() { // Lugar onde os even
     notes = loadNotes() // Carregar as notas do localStorage
     renderNotes() // Mostra as notas quando a página carrega
 
+    document.getElementById('filterToggleBtn').addEventListener('click', toggleFilterMenu)
+    document.addEventListener('click', function (event) {
+    const dropdown = document.querySelector('.filter-dropdown')
+    if (dropdown && !dropdown.contains(event.target)) {
+        document.getElementById('filterMenu').classList.remove('active')
+    }
+    })
     document.getElementById('noteForm').addEventListener('submit', saveNote)
     document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme)
 

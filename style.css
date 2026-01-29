@@ -90,6 +90,64 @@ header {
   color: white;
 }
 
+.filter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.filter-btn {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-color);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--brand-color);
+}
+
+.filter-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.filter-btn:hover {
+  background: var(--brand-color);
+  color: #fff;
+}
+
+.filter-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--surface-color);
+  border: 1px solid var(--surface-color);
+  border-radius: 0.5rem;
+  min-width: 160px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  display: none;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.filter-menu.active {
+  display: flex;
+}
+
+.filter-menu button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  transition: background 0.2s ease;
+}
+
+.filter-menu button:hover {
+  background: var(--base-color);
+}
+
 
 .notes-grid {
   display: grid;
