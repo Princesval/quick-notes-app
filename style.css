@@ -83,6 +83,7 @@ header {
   font-weight: 500;
   transition: all 0.2s ease;
   margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .theme-toggle-btn:hover {
@@ -396,4 +397,10 @@ dialog::backdrop {
 .empty-state p {
   font-size: 1rem;
   margin-bottom: 2rem;
+}
+
+@media(max-width: 580px) {
+  header {
+    flex-direction: column;
+  }
 }
